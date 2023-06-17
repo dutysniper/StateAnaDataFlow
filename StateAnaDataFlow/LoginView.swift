@@ -8,26 +8,49 @@
 import SwiftUI
 
 struct LoginView: View {
-    @State private var name = ""
     @EnvironmentObject private var user: UserSettings
+    @EnvironmentObject private var dataManager: DataManager
+    @FocusState var isActive: Bool
     
     var body: some View {
-        VStack {
-            TextField("Enter your name...", text: $name)
-                .multilineTextAlignment(.center)
-            Button(action: login) {
+        ZStack {
+            Color(.white).ignoresSafeArea()
+                .onTapGesture {
+                    isActive = false
+                }
+            VStack {
                 HStack {
-                    Image(systemName: "checkmark.circle")
-                    Text("OK")
+                    TextField("Enter your name...", text: $user.name)
+                        .multilineTextAlignment(.center)
+                        .toolbar {
+                            ToolbarItemGroup(placement: .keyboard) {
+                                Spacer()
+                                Button("Done") {
+                                    isActive = false
+                                }
+                            }
+                        }
+                        .autocorrectionDisabled()
+                        .focused($isActive)
+                    Text("\(user.name.count)")
+                        .foregroundColor(user.validate() ? .green : .red)
+                }
+                Button(action: login) {
+                    HStack {
+                        Image(systemName: "checkmark.circle")
+                        Text("OK")
+                    }
+                    .disabled(!user.validate())
                 }
             }
+            
+            .padding()
         }
     }
     
     private func login() {
-        if !name.isEmpty {
-            user.name = name
-            user.isLoggedIn.toggle()
+        if user.validate() {
+            dataManager.add(user: user.name)
         }
     }
 }

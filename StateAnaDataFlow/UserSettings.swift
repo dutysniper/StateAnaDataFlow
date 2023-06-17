@@ -8,6 +8,9 @@
 import Foundation
 
 final class UserSettings: ObservableObject {
-    @Published var isLoggedIn = false
-    var name = ""
+    @Published var name = ""
+    
+    func validate() -> Bool {
+        name.count > 2
+    }
 }

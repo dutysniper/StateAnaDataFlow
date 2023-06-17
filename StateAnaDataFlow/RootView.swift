@@ -9,13 +9,15 @@ import SwiftUI
 
 struct RootView: View {
     @StateObject private var user = UserSettings()
-    
+    @StateObject private var dataManager = DataManager()
     var body: some View {
         Group {
-            if user.isLoggedIn {
-                ContentView()
-            } else {
+            if dataManager.isLogin {
                 LoginView()
+                    .environmentObject(dataManager)
+            } else {
+                ContentView()
+                    .environmentObject(dataManager)
             }
         }
         .environmentObject(user)
